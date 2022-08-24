@@ -20,7 +20,8 @@ class _ListViewHome extends State<ListViewHome> {
             zipCode: '75005',
             city: 'PARIS',
             country: 'France'),
-        coordinates: [48.84309533, 2.363970569]),
+        coordinates: [48.84309533, 2.363970569],
+        visited: true),
     Restaurant(
         name: 'PARIS GARE DE LYON ORIGINALS AREAS',
         address: Address(
@@ -28,7 +29,8 @@ class _ListViewHome extends State<ListViewHome> {
             zipCode: '75012',
             city: 'PARIS',
             country: 'France'),
-        coordinates: [48.844631, 2.375697]),
+        coordinates: [48.844631, 2.375697],
+        visited: true),
   ];
 
   final TextEditingController searchController = TextEditingController();
@@ -65,7 +67,6 @@ class _ListViewHome extends State<ListViewHome> {
 
   @override
   Widget build(BuildContext context) {
-    restaurants[1].visited = true;
     return Scaffold(
       body: SafeArea(
           child: Column(

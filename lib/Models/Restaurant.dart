@@ -8,7 +8,10 @@ class Restaurant {
   late int note;
 
   Restaurant(
-      {required this.name, required this.address, required this.coordinates});
+      {required this.name,
+      required this.address,
+      required this.coordinates,
+      this.visited = false});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
     return Restaurant(
