@@ -34,6 +34,7 @@ class Restaurant {
   Address address;
   List<double> coordinates;
   bool visited = false;
+  late int note;
 
   Restaurant(
       {required this.name, required this.address, required this.coordinates});
