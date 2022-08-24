@@ -138,6 +138,26 @@ class _ListViewHome extends State<ListViewHome> {
     });
   }
 
+  onFilterChanged(int? value) {
+    setState(() {
+      switch (value) {
+        case 0:
+          resultRestaurantList = restaurants
+              .where((restaurant) => restaurant.visited == true)
+              .toList();
+          break;
+        case 1:
+          resultRestaurantList = restaurants
+              .where((restaurant) => restaurant.visited == false)
+              .toList();
+          break;
+        case 2:
+          resultRestaurantList = restaurants.toList();
+          break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     restaurants[1].visited = true;
@@ -145,13 +165,41 @@ class _ListViewHome extends State<ListViewHome> {
       body: SafeArea(
           child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: TextField(
-              controller: searchController,
-              decoration: const InputDecoration(hintText: 'Rechercher...'),
-              onChanged: onSearchInputChanged,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    controller: searchController,
+                    decoration:
+                        const InputDecoration(hintText: 'Rechercher...'),
+                    onChanged: onSearchInputChanged,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: DropdownButton(
+                  items: const [
+                    DropdownMenuItem(
+                      value: 0,
+                      child: Text('Visité'),
+                    ),
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text('Pas encore visité'),
+                    ),
+                    DropdownMenuItem(
+                      value: 2,
+                      child: Text('Tous'),
+                    )
+                  ],
+                  icon: const Icon(Icons.filter_alt),
+                  onChanged: onFilterChanged,
+                ),
+              )
+            ],
           ),
           ListView.builder(
               scrollDirection: Axis.vertical,
