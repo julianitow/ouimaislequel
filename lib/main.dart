@@ -33,6 +33,7 @@ class Restaurant {
   String name;
   Address address;
   List<double> coordinates;
+  bool visited = false;
 
   Restaurant(
       {required this.name, required this.address, required this.coordinates});
@@ -125,38 +126,68 @@ class _ListViewHome extends State<ListViewHome> {
         coordinates: [48.844631, 2.375697]),
   ];
 
+  final TextEditingController searchController = TextEditingController();
+  late List<Restaurant> resultRestaurantList = List.from(restaurants);
+
+  onSearchInputChanged(String value) {
+    setState(() {
+      resultRestaurantList = restaurants
+          .where((restaurant) =>
+              restaurant.name.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(titles.length);
+    restaurants[1].visited = true;
     return Scaffold(
       body: SafeArea(
-          child: ListView.builder(
+          child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: searchController,
+              decoration: const InputDecoration(hintText: 'Rechercher...'),
+              onChanged: onSearchInputChanged,
+            ),
+          ),
+          ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: restaurants.length,
+              itemCount: resultRestaurantList.length,
               itemBuilder: ((context, index) {
                 return Card(
                   child: ListTile(
-                    title: Text(restaurants[index].name),
-                    subtitle: Text(restaurants[index].address.toString()),
+                    title: Text(resultRestaurantList[index].name),
+                    subtitle:
+                        Text(resultRestaurantList[index].address.toString()),
                     leading: icon,
-                    trailing: index % 2 == 0 ? const Icon(Icons.check) : null,
+                    trailing: resultRestaurantList[index].visited
+                        ? const Icon(Icons.check)
+                        : null,
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const RestaurantDetailsView()));
+                              builder: (context) => RestaurantDetailsView(
+                                    restaurant: restaurants[index],
+                                  )));
                     },
                   ),
                 );
-              }))),
+              })),
+        ],
+      )),
     );
   }
 }
 
 class RestaurantDetailsView extends StatefulWidget {
-  const RestaurantDetailsView({Key? key}) : super(key: key);
+  final Restaurant restaurant;
+  const RestaurantDetailsView({Key? key, required this.restaurant})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _RestaurantDetailsView();
@@ -172,6 +203,7 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
         body: SafeArea(
           child: Column(
             children: [
+              Text(widget.restaurant.name),
               MaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
