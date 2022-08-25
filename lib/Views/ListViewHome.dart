@@ -17,6 +17,21 @@ class _ListViewHome extends State<ListViewHome> {
   final HttpService httpService = HttpService();
   final TextEditingController searchController = TextEditingController();
   late List<Restaurant> resultRestaurantList = List.from(restaurants);
+  int selectedFilter = 2; // All
+  List<DropdownMenuItem<int>> filters = const [
+    DropdownMenuItem(
+      value: 0,
+      child: Text('Visité'),
+    ),
+    DropdownMenuItem(
+      value: 1,
+      child: Text('Pas encore visité'),
+    ),
+    DropdownMenuItem(
+      value: 2,
+      child: Text('Tous'),
+    )
+  ];
 
   onSearchInputChanged(String value) {
     setState(() {
@@ -28,7 +43,11 @@ class _ListViewHome extends State<ListViewHome> {
   }
 
   onFilterChanged(int? value) {
+    if (value == null) {
+      return;
+    }
     setState(() {
+      selectedFilter = value;
       switch (value) {
         case 0:
           resultRestaurantList = restaurants
@@ -82,20 +101,8 @@ class _ListViewHome extends State<ListViewHome> {
               Padding(
                 padding: const EdgeInsets.only(right: 10.0),
                 child: DropdownButton(
-                  items: const [
-                    DropdownMenuItem(
-                      value: 0,
-                      child: Text('Visité'),
-                    ),
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Text('Pas encore visité'),
-                    ),
-                    DropdownMenuItem(
-                      value: 2,
-                      child: Text('Tous'),
-                    )
-                  ],
+                  items: filters,
+                  value: selectedFilter,
                   icon: const Icon(Icons.filter_alt),
                   onChanged: onFilterChanged,
                 ),
