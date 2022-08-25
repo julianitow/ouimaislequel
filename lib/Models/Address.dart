@@ -21,4 +21,11 @@ class Address {
         city: parsedJson['city'].toString(),
         country: parsedJson['country'].toString());
   }
+
+  Map<String, dynamic> toJson() => {
+        'address': address,
+        'zipCode': zipCode.toString(),
+        'city': city,
+        'country': country
+      };
 }

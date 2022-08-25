@@ -48,6 +48,9 @@ class _LoginView extends State<LoginView> {
                   );
                 }
                 users = snapshot.data!;
+                if (users.isEmpty) {
+                  return const Text('Deso y\'a une erreur');
+                }
                 return ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,

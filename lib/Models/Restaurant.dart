@@ -28,4 +28,12 @@ class Restaurant {
         address: Address.fromJson(parsedJson['address']),
         coordinates: [coordinates[0] as double, coordinates[1] as double]);
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'address': address.toJson(),
+        'coordinates': coordinates,
+        'visited': visited.toString()
+      };
 }

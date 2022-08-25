@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mcdo_paris/Models/Restaurant.dart';
+import 'package:mcdo_paris/Services/HTTPService.dart';
 
 class RestaurantDetailsView extends StatefulWidget {
   final Restaurant restaurant;
@@ -13,6 +14,7 @@ class RestaurantDetailsView extends StatefulWidget {
 class _RestaurantDetailsView extends State<RestaurantDetailsView> {
   Image icon = Image.asset('assets/logo-mcdo.png');
   Color green = const Color.fromARGB(255, 24, 100, 30);
+  HttpService httpService = HttpService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +61,16 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
                     onPressed: () {
                       setState(() {
                         widget.restaurant.visited = !widget.restaurant.visited;
+                        httpService.updateRestaurant(widget.restaurant).then(
+                          (res) {
+                            if (res != 201) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Deso y\'a eu une erreur')));
+                            }
+                          },
+                        );
                       });
                     },
                     icon: widget.restaurant.visited

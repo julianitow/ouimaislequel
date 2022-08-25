@@ -120,6 +120,9 @@ class _ListViewHome extends State<ListViewHome> {
                   );
                 }
                 restaurants = snapshot.data!;
+                if (restaurants.isEmpty) {
+                  return const Text('Deso y\'a eu une erreur');
+                }
                 return Expanded(
                   child: ListView.builder(
                       scrollDirection: Axis.vertical,
