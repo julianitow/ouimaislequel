@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mcdo_paris/Models/Address.dart';
 import 'package:mcdo_paris/Models/Restaurant.dart';
 import 'package:mcdo_paris/Services/HTTPService.dart';
 import 'package:mcdo_paris/Views/RestaurantDetailsView.dart';
@@ -67,15 +66,13 @@ class _ListViewHome extends State<ListViewHome> {
   }
 
   refresh() {
-    httpService.getRestaurants().then((newData) {
+    return httpService.getRestaurants().then((newData) {
       setState(() {
         restaurants = newData;
-        for (final data in newData) {
-          if (data.visited) {
-            print(data.name);
-          }
-        }
+        resultRestaurantList = restaurants;
       });
+    }).catchError((err) {
+      print(err);
     });
   }
 
@@ -120,37 +117,49 @@ class _ListViewHome extends State<ListViewHome> {
                   );
                 }
                 restaurants = snapshot.data!;
-                if (restaurants.isEmpty) {
-                  return const Text('Deso y\'a eu une erreur');
-                }
                 return Expanded(
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: resultRestaurantList.length,
-                      itemBuilder: ((context, index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(resultRestaurantList[index].name),
-                            subtitle: Text(
-                                resultRestaurantList[index].address.toString()),
-                            leading: icon,
-                            trailing: resultRestaurantList[index].visited
-                                ? const Icon(Icons.check)
-                                : null,
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          RestaurantDetailsView(
-                                            restaurant:
-                                                resultRestaurantList[index],
-                                          ))).then((_) => refresh());
-                            },
-                          ),
-                        );
-                      })),
+                  child: RefreshIndicator(
+                    onRefresh: () => refresh(),
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: resultRestaurantList.isEmpty
+                            ? 1
+                            : resultRestaurantList.length,
+                        itemBuilder: ((context, index) {
+                          if (resultRestaurantList.isEmpty) {
+                            return const Card(
+                                child: ListTile(
+                              title:
+                                  Text('Deso y\'a une erreur, tire pour voir'),
+                              leading: Icon(Icons.error),
+                              iconColor: Colors.red,
+                            ));
+                          }
+                          return Card(
+                            child: ListTile(
+                              title: Text(resultRestaurantList[index].name),
+                              subtitle: Text(resultRestaurantList[index]
+                                  .address
+                                  .toString()),
+                              leading: icon,
+                              trailing: resultRestaurantList[index].visited
+                                  ? const Icon(Icons.check)
+                                  : null,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            RestaurantDetailsView(
+                                              restaurant:
+                                                  resultRestaurantList[index],
+                                            ))).then((_) => refresh());
+                              },
+                            ),
+                          );
+                        })),
+                  ),
                 );
               }),
         ],
