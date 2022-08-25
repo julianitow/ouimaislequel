@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mcdo_paris/Models/User.dart';
+import 'package:http/http.dart';
+import 'package:mcdo_paris/Services/HTTPService.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -8,8 +10,10 @@ class LoginView extends StatefulWidget {
 
 class _LoginView extends State<LoginView> {
   Image icon = Image.asset('assets/logo-mcdo.png');
+  HttpService httpService = HttpService();
   final TextEditingController passwordController = TextEditingController();
-  late List<User> users = [User(username: 'Noémie'), User(username: 'Julien')];
+  late List<User> users =
+      List.empty(); // [User(username: 'Noémie'), User(username: 'Julien')];
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +35,34 @@ class _LoginView extends State<LoginView> {
               style: TextStyle(fontSize: 20),
             ),
             const Divider(height: 15, thickness: 1, color: Colors.green),
-            ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: users.length,
-                itemBuilder: ((context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(users[index].username),
-                      onTap: () {
-                        print(users[index].username);
-                      },
-                    ),
+            FutureBuilder(
+              future: httpService.getUsers(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        color: Color.fromARGB(255, 23, 65, 24)),
                   );
-                }))
+                }
+                users = snapshot.data!;
+                return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: users.length,
+                    itemBuilder: ((context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(users[index].username),
+                          onTap: () {
+                            print(users[index].username);
+                            print(users[index].id);
+                          },
+                        ),
+                      );
+                    }));
+              },
+            ),
           ],
         ),
       )),
