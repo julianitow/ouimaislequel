@@ -16,7 +16,7 @@ class Address {
 
   factory Address.fromJson(Map<String, dynamic> parsedJson) {
     return Address(
-        address: parsedJson['address1'].toString(),
+        address: parsedJson['address'].toString(),
         zipCode: parsedJson['zipCode'].toString(),
         city: parsedJson['city'].toString(),
         country: parsedJson['country'].toString());

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:mcdo_paris/Models/Restaurant.dart';
 import 'package:mcdo_paris/Models/User.dart';
 
 class HttpService {
@@ -19,5 +20,18 @@ class HttpService {
       print('Error: $res.statusCode');
     }
     return users;
+  }
+
+  Future<List<Restaurant>> getRestaurants() async {
+    final Uri uri = Uri.http(host, restaurantsRoute);
+    List<Restaurant> restaurants = List.empty();
+    Response res = await get(uri);
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+      restaurants = body.map((e) => Restaurant.fromJson(e)).toList();
+    } else {
+      print('Error: $res.statusCode');
+    }
+    return restaurants;
   }
 }

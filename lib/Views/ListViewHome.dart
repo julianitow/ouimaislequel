@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mcdo_paris/Models/Address.dart';
 import 'package:mcdo_paris/Models/Restaurant.dart';
+import 'package:mcdo_paris/Services/HTTPService.dart';
 import 'package:mcdo_paris/Views/RestaurantDetailsView.dart';
 
 class ListViewHome extends StatefulWidget {
@@ -12,7 +13,8 @@ class ListViewHome extends StatefulWidget {
 
 class _ListViewHome extends State<ListViewHome> {
   Image icon = Image.asset('assets/logo-mcdo.png');
-  final List<Restaurant> restaurants = [
+  late List<Restaurant> restaurants = List
+      .empty(); /*[
     Restaurant(
         name: 'PARIS AUSTERLITZ',
         address: Address(
@@ -31,8 +33,8 @@ class _ListViewHome extends State<ListViewHome> {
             country: 'France'),
         coordinates: [48.844631, 2.375697],
         visited: true),
-  ];
-
+  ];*/
+  final HttpService httpService = HttpService();
   final TextEditingController searchController = TextEditingController();
   late List<Restaurant> resultRestaurantList = List.from(restaurants);
 
@@ -107,31 +109,46 @@ class _ListViewHome extends State<ListViewHome> {
               )
             ],
           ),
-          ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: resultRestaurantList.length,
-              itemBuilder: ((context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text(resultRestaurantList[index].name),
-                    subtitle:
-                        Text(resultRestaurantList[index].address.toString()),
-                    leading: icon,
-                    trailing: resultRestaurantList[index].visited
-                        ? const Icon(Icons.check)
-                        : null,
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RestaurantDetailsView(
-                                    restaurant: restaurants[index],
-                                  )));
-                    },
-                  ),
+          FutureBuilder(
+              future: httpService.getRestaurants(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Restaurant>> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                        color: Color.fromARGB(255, 23, 65, 24)),
+                  );
+                }
+                restaurants = snapshot.data!;
+                return Expanded(
+                  child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: resultRestaurantList.length,
+                      itemBuilder: ((context, index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text(resultRestaurantList[index].name),
+                            subtitle: Text(
+                                resultRestaurantList[index].address.toString()),
+                            leading: icon,
+                            trailing: resultRestaurantList[index].visited
+                                ? const Icon(Icons.check)
+                                : null,
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RestaurantDetailsView(
+                                            restaurant: restaurants[index],
+                                          )));
+                            },
+                          ),
+                        );
+                      })),
                 );
-              })),
+              }),
         ],
       )),
     );
