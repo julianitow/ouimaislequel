@@ -13,27 +13,7 @@ class ListViewHome extends StatefulWidget {
 
 class _ListViewHome extends State<ListViewHome> {
   Image icon = Image.asset('assets/logo-mcdo.png');
-  late List<Restaurant> restaurants = List
-      .empty(); /*[
-    Restaurant(
-        name: 'PARIS AUSTERLITZ',
-        address: Address(
-            address: '2 Boulevard de l\'Hôpital',
-            zipCode: '75005',
-            city: 'PARIS',
-            country: 'France'),
-        coordinates: [48.84309533, 2.363970569],
-        visited: true),
-    Restaurant(
-        name: 'PARIS GARE DE LYON ORIGINALS AREAS',
-        address: Address(
-            address: 'Gare de Lyon Hall 3',
-            zipCode: '75012',
-            city: 'PARIS',
-            country: 'France'),
-        coordinates: [48.844631, 2.375697],
-        visited: true),
-  ];*/
+  late List<Restaurant> restaurants = List.empty();
   final HttpService httpService = HttpService();
   final TextEditingController searchController = TextEditingController();
   late List<Restaurant> resultRestaurantList = List.from(restaurants);
@@ -64,6 +44,19 @@ class _ListViewHome extends State<ListViewHome> {
           resultRestaurantList = restaurants.toList();
           break;
       }
+    });
+  }
+
+  refresh() {
+    httpService.getRestaurants().then((newData) {
+      setState(() {
+        restaurants = newData;
+        for (final data in newData) {
+          if (data.visited) {
+            print(data.name);
+          }
+        }
+      });
     });
   }
 
@@ -146,7 +139,7 @@ class _ListViewHome extends State<ListViewHome> {
                                           RestaurantDetailsView(
                                             restaurant:
                                                 resultRestaurantList[index],
-                                          )));
+                                          ))).then((_) => refresh());
                             },
                           ),
                         );

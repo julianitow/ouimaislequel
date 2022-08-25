@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:mcdo_paris/Models/Address.dart';
 
 class Restaurant {
@@ -26,6 +28,7 @@ class Restaurant {
         id: parsedJson['_id'].toString(),
         name: parsedJson['name'].toString(),
         address: Address.fromJson(parsedJson['address']),
+        visited: parsedJson['visited'] == 'true',
         coordinates: [coordinates[0] as double, coordinates[1] as double]);
   }
 
