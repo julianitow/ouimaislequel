@@ -141,7 +141,8 @@ class _ListViewHome extends State<ListViewHome> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           RestaurantDetailsView(
-                                            restaurant: restaurants[index],
+                                            restaurant:
+                                                resultRestaurantList[index],
                                           )));
                             },
                           ),
