@@ -1,6 +1,7 @@
 import 'package:mcdo_paris/Models/Address.dart';
 
 class Restaurant {
+  String id;
   String name;
   Address address;
   List<double> coordinates;
@@ -8,7 +9,8 @@ class Restaurant {
   late int note;
 
   Restaurant(
-      {required this.name,
+      {required this.id,
+      required this.name,
       required this.address,
       required this.coordinates,
       this.visited = false});
@@ -21,6 +23,7 @@ class Restaurant {
       }
     }
     return Restaurant(
+        id: parsedJson['_id'].toString(),
         name: parsedJson['name'].toString(),
         address: Address.fromJson(parsedJson['address']),
         coordinates: [coordinates[0] as double, coordinates[1] as double]);
