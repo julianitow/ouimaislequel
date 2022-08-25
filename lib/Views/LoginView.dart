@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:mcdo_paris/Models/User.dart';
 import 'package:http/http.dart';
 import 'package:mcdo_paris/Services/HTTPService.dart';
+import 'package:mcdo_paris/Views/ListViewHome.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -55,8 +57,17 @@ class _LoginView extends State<LoginView> {
                         child: ListTile(
                           title: Text(users[index].username),
                           onTap: () {
-                            print(users[index].username);
-                            print(users[index].id);
+                            Hive.openBox('user').then((box) {
+                              box
+                                  .put(users[index].username, users[index].id)
+                                  .then((_) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ListViewHome()));
+                              });
+                            });
                           },
                         ),
                       );

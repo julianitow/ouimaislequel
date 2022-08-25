@@ -14,9 +14,7 @@ class HttpService {
     Response res = await get(uri);
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
-      print(body);
       users = body.map((e) => User.fromJson(e)).toList();
-      print(users[0].id);
     } else {
       print('Error: $res.statusCode');
     }
