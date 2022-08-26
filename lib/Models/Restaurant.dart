@@ -8,6 +8,7 @@ class Restaurant {
   Address address;
   List<double> coordinates;
   bool visited = false;
+  String? date;
   late int note;
 
   Restaurant(
@@ -15,7 +16,8 @@ class Restaurant {
       required this.name,
       required this.address,
       required this.coordinates,
-      this.visited = false});
+      this.visited = false,
+      this.date});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
     final coordinates = parsedJson['coordinates'];
@@ -29,7 +31,8 @@ class Restaurant {
         name: parsedJson['name'].toString(),
         address: Address.fromJson(parsedJson['address']),
         visited: parsedJson['visited'] == 'true',
-        coordinates: [coordinates[0] as double, coordinates[1] as double]);
+        coordinates: [coordinates[0] as double, coordinates[1] as double],
+        date: parsedJson['date']);
   }
 
   Map<String, dynamic> toJson() => {

@@ -60,6 +60,7 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    String visitedDate = widget.restaurant.date ?? "aujourd'hui";
     return Scaffold(
         appBar: AppBar(
           title: const Text('Restaurant details view'),
@@ -167,7 +168,7 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
                                       ? const Icon(Icons.visibility)
                                       : const Icon(Icons.visibility_off),
                                   Text(widget.restaurant.visited
-                                      ? 'Visité'
+                                      ? 'Visité le $visitedDate'
                                       : 'Pas encore visité')
                                 ]),
                               ),
