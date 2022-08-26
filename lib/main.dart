@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mcdo_paris/Views/ListViewHome.dart';
 import 'package:mcdo_paris/Views/LoginView.dart';
@@ -28,8 +27,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Macdo-Paname',
         theme: ThemeData(
-            primarySwatch: Colors.green,
-            visualDensity: VisualDensity.adaptivePlatformDensity),
+          primarySwatch: Colors.green,
+        ),
+        darkTheme:
+            ThemeData(brightness: Brightness.dark, primarySwatch: Colors.green),
+        themeMode: ThemeMode.system,
         home: FutureBuilder(
           future: startApp(context),
           builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
