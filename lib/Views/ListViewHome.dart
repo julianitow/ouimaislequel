@@ -16,6 +16,8 @@ class _ListViewHome extends State<ListViewHome> {
   final HttpService httpService = HttpService();
   final TextEditingController searchController = TextEditingController();
   late List<Restaurant> resultRestaurantList = List.from(restaurants);
+  late Future<List<Restaurant>> getRestaurants;
+  int visitedCount = 0;
   int selectedFilter = 2; // All
   List<DropdownMenuItem<int>> filters = const [
     DropdownMenuItem(
@@ -67,6 +69,11 @@ class _ListViewHome extends State<ListViewHome> {
 
   refresh() {
     return httpService.getRestaurants().then((newData) {
+      for (final restaurant in newData) {
+        if (restaurant.visited) {
+          visitedCount++;
+        }
+      }
       setState(() {
         selectedFilter = 2; // all
         restaurants = newData;
@@ -85,7 +92,14 @@ class _ListViewHome extends State<ListViewHome> {
   }
 
   @override
+  void initState() {
+    getRestaurants = httpService.getRestaurants();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    visitedCount = 0;
     return Scaffold(
       body: SafeArea(
           child: Column(
@@ -121,7 +135,7 @@ class _ListViewHome extends State<ListViewHome> {
             ],
           ),
           FutureBuilder(
-              future: httpService.getRestaurants(),
+              future: getRestaurants,
               builder: (BuildContext context,
                   AsyncSnapshot<List<Restaurant>> snapshot) {
                 if (!snapshot.hasData) {
@@ -131,51 +145,112 @@ class _ListViewHome extends State<ListViewHome> {
                   );
                 }
                 restaurants = snapshot.data!;
+                for (final restaurant in restaurants) {
+                  if (restaurant.visited) {
+                    visitedCount++;
+                  }
+                }
+                int left = restaurants.length - visitedCount;
                 return Expanded(
                   child: RefreshIndicator(
                     onRefresh: () => refresh(),
-                    child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: resultRestaurantList.isEmpty
-                            ? 1
-                            : resultRestaurantList.length,
-                        itemBuilder: ((context, index) {
-                          if (resultRestaurantList.isEmpty) {
-                            return const Card(
-                                child: ListTile(
-                              title:
-                                  Text('Deso y\'a une erreur, tire pour voir'),
-                              leading: Icon(Icons.error),
-                              iconColor: Colors.red,
-                            ));
-                          }
-                          return Card(
-                            child: ListTile(
-                              title: Text(resultRestaurantList[index].name),
-                              subtitle: Text(resultRestaurantList[index]
-                                  .address
-                                  .toString()),
-                              leading: icon,
-                              trailing: resultRestaurantList[index].visited
-                                  ? const Icon(Icons.check)
-                                  : null,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RestaurantDetailsView(
-                                              restaurant:
-                                                  resultRestaurantList[index],
-                                            ))).then((_) {
-                                  refresh();
-                                  dismissKeyboard(context);
-                                });
-                              },
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 2.2,
+                                height: 50,
+                                child: Card(
+                                    child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              9),
+                                      child: const Icon(Icons.restaurant),
+                                    ),
+                                    Text('Goutés: $visitedCount'),
+                                  ],
+                                )),
+                              ),
                             ),
-                          );
-                        })),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 2.2,
+                                height: 50,
+                                child: Card(
+                                    child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              9),
+                                      child: const Icon(Icons.restaurant),
+                                    ),
+                                    Text('Dispos: $left'),
+                                  ],
+                                )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: resultRestaurantList.isEmpty
+                                  ? 1
+                                  : resultRestaurantList.length,
+                              itemBuilder: ((context, index) {
+                                if (resultRestaurantList.isEmpty) {
+                                  return const Card(
+                                      child: ListTile(
+                                    title: Text(
+                                        'Deso y\'a une erreur, tire pour voir'),
+                                    leading: Icon(Icons.error),
+                                    iconColor: Colors.red,
+                                  ));
+                                }
+                                return Card(
+                                  child: ListTile(
+                                    title:
+                                        Text(resultRestaurantList[index].name),
+                                    subtitle: Text(resultRestaurantList[index]
+                                        .address
+                                        .toString()),
+                                    leading: icon,
+                                    trailing:
+                                        resultRestaurantList[index].visited
+                                            ? const Icon(Icons.check)
+                                            : null,
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RestaurantDetailsView(
+                                                    restaurant:
+                                                        resultRestaurantList[
+                                                            index],
+                                                  ))).then((_) {
+                                        refresh();
+                                        dismissKeyboard(context);
+                                      });
+                                    },
+                                  ),
+                                );
+                              })),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }),
