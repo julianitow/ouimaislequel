@@ -63,12 +63,10 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
     String visitedDate = widget.restaurant.date ?? "aujourd'hui";
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Restaurant details view'),
           backgroundColor: green,
         ),
         body: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                   child: Padding(
@@ -88,16 +86,7 @@ class _RestaurantDetailsView extends State<RestaurantDetailsView> {
                 ]),
               )),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      'Addresse',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
