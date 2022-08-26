@@ -88,11 +88,23 @@ class _ListViewHome extends State<ListViewHome> {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: TextField(
-                    controller: searchController,
-                    decoration:
-                        const InputDecoration(hintText: 'Rechercher...'),
-                    onChanged: onSearchInputChanged,
-                  ),
+                      controller: searchController,
+                      decoration: InputDecoration(
+                          hintText: 'Rechercher...',
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                // Faire disparaitre le clavier
+                                final FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+
+                                searchController.clear();
+                                refresh();
+                              },
+                              icon: const Icon(Icons.clear))),
+                      onChanged: onSearchInputChanged),
                 ),
               ),
               Padding(
