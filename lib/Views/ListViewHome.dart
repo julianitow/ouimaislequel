@@ -68,12 +68,20 @@ class _ListViewHome extends State<ListViewHome> {
   refresh() {
     return httpService.getRestaurants().then((newData) {
       setState(() {
+        selectedFilter = 2; // all
         restaurants = newData;
         resultRestaurantList = restaurants;
       });
     }).catchError((err) {
       print(err);
     });
+  }
+
+  dismissKeyboard(BuildContext context) {
+    final FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 
   @override
@@ -93,13 +101,7 @@ class _ListViewHome extends State<ListViewHome> {
                           hintText: 'Rechercher...',
                           suffixIcon: IconButton(
                               onPressed: () {
-                                // Faire disparaitre le clavier
-                                final FocusScopeNode currentFocus =
-                                    FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
-
+                                dismissKeyboard(context);
                                 searchController.clear();
                                 refresh();
                               },
@@ -166,7 +168,10 @@ class _ListViewHome extends State<ListViewHome> {
                                             RestaurantDetailsView(
                                               restaurant:
                                                   resultRestaurantList[index],
-                                            ))).then((_) => refresh());
+                                            ))).then((_) {
+                                  refresh();
+                                  dismissKeyboard(context);
+                                });
                               },
                             ),
                           );
