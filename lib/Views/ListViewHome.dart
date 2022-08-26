@@ -243,6 +243,7 @@ class _ListViewHome extends State<ListViewHome> {
                                                   ))).then((_) {
                                         refresh();
                                         dismissKeyboard(context);
+                                        searchController.clear();
                                       });
                                     },
                                   ),

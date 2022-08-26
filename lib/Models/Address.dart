@@ -15,8 +15,10 @@ class Address {
   }
 
   factory Address.fromJson(Map<String, dynamic> parsedJson) {
+    String address = parsedJson['address'].toString();
+    address = address.replaceAll(',', '\n');
     return Address(
-        address: parsedJson['address'].toString(),
+        address: address,
         zipCode: parsedJson['zipCode'].toString(),
         city: parsedJson['city'].toString(),
         country: parsedJson['country'].toString());
