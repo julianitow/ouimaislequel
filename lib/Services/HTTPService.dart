@@ -4,7 +4,7 @@ import 'package:mcdo_paris/Models/Restaurant.dart';
 import 'package:mcdo_paris/Models/User.dart';
 
 class HttpService {
-  final String host = '10.0.0.14:3000';
+  final String host = 'alesia-julianitow.ovh:53400';
   final String usersRoute = '/users';
   final String restaurantsRoute = '/list';
   final String restaurantUpdateRoute = '/restaurant/';
